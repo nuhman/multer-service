@@ -1,0 +1,135 @@
+climate change is real
+energy challenge - 200 million people
+
+# author : cprakashagr
+# date   : 28-02-2015
+ 
+from __future__ import division
+import re
+ 
+class SummalAgain(object):
+ 
+    def toSent(self, content):
+        content = content.replace("\n", ". ");
+        return content.split(". ");
+ 
+    def toPara(self, content):
+        return content.split("\n\n");
+ 
+    def sentIntersection(self, sent1, sent2):
+ 
+        s1 = set(sent1.split(" "));
+        s2 = set(sent2.split(" "));
+ 
+        # No intersection, return 0
+        if (len(s1) + len(s2)) == 0:
+            return 0;
+ 
+        # Find median for normalization
+        # NOW, average number of words
+        return len(s1.intersection(s2)) / ((len(s1) + len(s2)) / 2);
+ 
+    # Remove all non-alphbetic chars  --  Use the formatted sentence as a key in sentences dictionary
+    def formatSent(self, sentence):
+        sentence = re.sub(r'\W+', '', sentence);
+        return sentence;
+ 
+    # Convert the content into a dictionary <K, V>; k = The formatted sentence, V = The rank of the sentence
+    def getSentRanks(self, content):
+ 
+        sentences = self.toSent(content);
+ 
+        # Calculate the intersection of every two sentences
+        n = len(sentences);
+        values = [[0 for x in xrange(n)] for x in xrange(n)];
+        for i in range(0, n):
+            for j in range(0, n):
+                values[i][j] = self.sentIntersection(sentences[i], sentences[j]);
+ 
+        # Sentences dictionary, the score of a sentences is the sum of all its intersection
+        sentences_dic = {};
+        for i in range(0, n):
+            score = 0;
+            for j in range(0, n):
+                if i == j:
+                    continue;
+                score += values[i][j];
+            sentences_dic[self.formatSent(sentences[i])] = score;
+        return sentences_dic;
+ 
+    def get_best_sentence(self, paragraph, sentences_dic):
+ 
+        sentences = self.toSent(paragraph);
+ 
+        # Ignore short paragraphs
+        if len(sentences) < 2:
+            return "";
+ 
+        # Get the best sentence according to the sentences dictionary
+        best_sentence = "";
+        max_value = 0;
+        for s in sentences:
+            strip_s = self.formatSent(s);
+            if strip_s:
+                if sentences_dic[strip_s] > max_value:
+                    max_value = sentences_dic[strip_s];
+                    best_sentence = s;
+ 
+        return best_sentence;
+ 
+    def get_summary(self, title, content, sentences_dic):
+ 
+        paragraphs = self.toPara(content);
+ 
+        summary = [];
+        summary.append(title.strip());
+        summary.append("");
+ 
+        # Add the best sentence from each paragraph
+        for p in paragraphs:
+            sentence = self.get_best_sentence(p, sentences_dic).strip();
+            if sentence:
+                summary.append(sentence);
+ 
+        return ("\n").join(summary);
+ 
+def main():
+ 
+    title = """
+    Let our Words be kind and sweet.
+    """;
+ 
+    content = """
+In a small village, a little boy lived with his father and mother. He was the only son for them. The parents of the little boy were very depressed due to his bad temper. The boy used to get angry very soon and taunt others with his words. His bad temper made him fall for angry words. He scolded kids, neighbours and even his friends due to anger. He invited all worries for his parents through the verbal usage. While he forgot what he spoke in anger, his friends and neighbours avoided him.
+ 
+His mother and father consoled him in many ways to give up his anger and develop kindness. Unfortunately, all their attempts failed. Finally, the boy's father came up with an idea.
+ 
+One day, his father gave him a huge bag of nails. He asked his son to hammer one nail to the fence every time he became angry and to lose his temper. The little boy found it hilarious and accepted to do what his father said.
+ 
+The nails drove him to hammer in the fence for 30 times on the first day! Every time he lost his temper, he ran to the fence and hammered a nail. In the next few days, the number of nails hammered on the fence was reduced to half. The little boy found it very difficult to hammer the nails and decided to control his temper.
+ 
+Gradually, the number of nails hammered to the fence was reduced and the day arrived when no nail was hammered! Yet, the boy did not lose his temper. He told his father that it was several days that he did not hammer any nail and he did not lose his temper!
+ 
+Now, his father told him to remove the nails every day as he had controlled his anger. Several days passed and the boy was able to pull out most of the nails from the fence. However, there remained a few nails that the boy could not pull out.
+ 
+The boy told his father about the same. The father appreciated him and asked him pointing to the hole, What do you see there? The boy replied, a hole in the fence!
+ 
+He told the boy, The nails were your bad temper and they were hammered on people. You can remove the nails but still see the holes in the fence. Again, you cannot pull out a few nails. The fence never look the same! It has scars all over! You can stab a man with a knife, but the wound will remain there forever. Your bad temper and anger were like that! Words are more painful than physical abuse! Use words for good. Use them to embrace the relationships. Use them to show your heart!
+ 
+Inappropriate verbal usage would cause permanent marks than physical damage!
+    """;
+     
+    st = SummalAgain();
+    sentences_dic = st.getSentRanks(content);
+    summary = st.get_summary(title, content, sentences_dic);
+ 
+    print "\n\nSummal Again 0.1\n\n";
+    print summary;
+    print "";
+    print "Original Length 	:  %s" % (len(title) + len(content));
+    print "Summary Length	 	:  %s" % len(summary);
+    print "Summary Ratio		:  %s" % (100 * (len(summary) / (len(title) + len(content))));
+    print "\nBy: CP\n\n";
+ 
+if __name__ == '__main__':
+    main();

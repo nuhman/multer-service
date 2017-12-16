@@ -4,6 +4,7 @@
   "description": "A full stack JS app that provides File Metadata using the multer node module",
   "main": "index.js",
   "scripts": {
+    "dev": "nodemon index.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
@@ -20,5 +21,8 @@
     "body-parser": "^1.18.2",
     "express": "^4.16.2",
     "multer": "^1.3.0"
+  },
+  "devDependencies": {
+    "nodemon": "^1.13.3"
   }
 }
